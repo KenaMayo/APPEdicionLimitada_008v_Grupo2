@@ -7,14 +7,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import kotlinx.coroutines.launch
 import com.vivitasol.carcasamvvm.navigation.Route
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuShellView() {
+fun MenuShellView(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val innerNavController = rememberNavController()
@@ -24,65 +25,52 @@ fun MenuShellView() {
         drawerContent = {
             ModalDrawerSheet {
                 Text(
-                    text = "Menú",
+                    text = "Menu",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(16.dp)
                 )
                 NavigationDrawerItem(
-                    label = { Text("2.1.3Componentes") },
-                    selected = currentInnerRoute(innerNavController) == Route.Option1.route,
+                    label = { Text("Home") },
+                    selected = currentInnerRoute(innerNavController) == Route.Home.route,
                     onClick = {
-                        innerNavController.navigate(Route.Option1.route) {
-                            popUpTo(Route.Option1.route) { inclusive = false }
+                        innerNavController.navigate(Route.Home.route) {
+                            popUpTo(Route.Home.route) { inclusive = true }
                             launchSingleTop = true
                         }
                         scope.launch { drawerState.close() }
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("2.2.4Navegacion") },
-                    selected = currentInnerRoute(innerNavController) == Route.Option2.route,
+                    label = { Text("Detail") },
+                    selected = currentInnerRoute(innerNavController) == Route.Detail.route,
                     onClick = {
-                        innerNavController.navigate(Route.Option2.route) {
-                            popUpTo(Route.Option1.route) { inclusive = false }
+                        innerNavController.navigate(Route.Detail.route) {
+                            popUpTo(Route.Home.route) { inclusive = false }
                             launchSingleTop = true
                         }
                         scope.launch { drawerState.close() }
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("2.3.3form") },
-                    selected = currentInnerRoute(innerNavController) == Route.Option3.route,
+                    label = { Text("Create Product") },
+                    selected = currentInnerRoute(innerNavController) == Route.CreateProduct.route,
                     onClick = {
-                        innerNavController.navigate(Route.Option3.route) {
-                            popUpTo(Route.Option1.route) { inclusive = false }
+                        innerNavController.navigate(Route.CreateProduct.route) {
+                            popUpTo(Route.Home.route) { inclusive = false }
                             launchSingleTop = true
                         }
                         scope.launch { drawerState.close() }
                     }
                 )
-
+                Divider()
                 NavigationDrawerItem(
-                    label = { Text("2.4.2Persistencia y Animaciones") },
-                    selected = currentInnerRoute(innerNavController) == Route.Option4.route,
+                    label = { Text("Cerrar sesión") },
+                    selected = false,
                     onClick = {
-                        innerNavController.navigate(Route.Option4.route) {
-                            popUpTo(Route.Option1.route) { inclusive = false }
-                            launchSingleTop = true
-                        }
                         scope.launch { drawerState.close() }
-                    }
-                )
-
-                NavigationDrawerItem(
-                    label = { Text("2.4.4FuncionNativa(Camara)") },
-                    selected = currentInnerRoute(innerNavController) == Route.Option5.route,
-                    onClick = {
-                        innerNavController.navigate(Route.Option5.route) {
-                            popUpTo(Route.Option1.route) { inclusive = false }
-                            launchSingleTop = true
+                        navController.navigate(Route.Login.route) {
+                            popUpTo(Route.MenuShell.route) { inclusive = true }
                         }
-                        scope.launch { drawerState.close() }
                     }
                 )
             }
@@ -91,38 +79,27 @@ fun MenuShellView() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Carcasa Ejemplos Semestre") },
+                    title = { Text("Limited Edition") },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
                                 if (drawerState.isClosed) drawerState.open() else drawerState.close()
                             }
                         }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menú")
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
                         }
                     }
                 )
             }
         ) { innerPadding ->
-            // NavHost interno para las opciones del menú
             NavHost(
                 navController = innerNavController,
-                startDestination = Route.Option1.route,
+                startDestination = Route.Home.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable(Route.Option1.route) { Option1View() }
-                composable(Route.Option2.route) { Option2View(navController = innerNavController) } // <--recibe nav
-                composable(Route.Option3.route) { Option3View() }
-                //pantalla de detalle para la clase 2(con nav)
-                composable(Route.Option2Detail.route) { backStack ->
-                    val id = backStack.arguments?.getString("id") ?: "sin-id"
-                    Option2DetailView(
-                        id = id,
-                        onBack = { innerNavController.navigateUp() }
-                    )
-                }
-                composable(Route.Option4.route) { Option4View() }
-                composable(Route.Option5.route) { Option5CameraView() }
+                composable(Route.Home.route) { HomeView() }
+                composable(Route.Detail.route) { DetailView() }
+                composable(Route.CreateProduct.route) { CreateProductView() }
             }
         }
     }

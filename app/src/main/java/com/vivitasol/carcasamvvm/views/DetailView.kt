@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetalleView(
+fun DetailView(
     vm: DetailViewModel = viewModel()
 ) {
     val state by vm.state.collectAsState()
@@ -30,12 +30,12 @@ fun DetalleView(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
         if (state.selectedProduct == null) {
-            ProductList(paddingValues = it, products = state.products, onProductClick = vm::onProductSelected)
+            ProductListView(paddingValues = it, products = state.products, onProductClick = vm::onProductSelected)
         } else {
-            ProductDetail(paddingValues = it, product = state.selectedProduct!!, vm = vm) {
+            ProductDetailView(paddingValues = it, product = state.selectedProduct!!, vm = vm) {
                 vm.onProductEdited()
                 scope.launch {
-                    snackbarHostState.showSnackbar("Producto editado")
+                    snackbarHostState.showSnackbar("Product edited")
                 }
             }
         }
@@ -43,7 +43,7 @@ fun DetalleView(
 }
 
 @Composable
-fun ProductList(paddingValues: PaddingValues, products: List<Product>, onProductClick: (Product) -> Unit) {
+fun ProductListView(paddingValues: PaddingValues, products: List<Product>, onProductClick: (Product) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +51,7 @@ fun ProductList(paddingValues: PaddingValues, products: List<Product>, onProduct
             .padding(16.dp)
     ) {
         Text(
-            "Productos Agregados Recientemente",
+            "Recently Added Products",
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
         Spacer(Modifier.height(16.dp))
@@ -71,7 +71,7 @@ fun ProductList(paddingValues: PaddingValues, products: List<Product>, onProduct
                     ) {
                         Text(product.name, style = MaterialTheme.typography.titleMedium)
                         Spacer(Modifier.weight(1f))
-                        Text("Ver detalle", style = MaterialTheme.typography.labelLarge)
+                        Text("View details", style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -80,10 +80,10 @@ fun ProductList(paddingValues: PaddingValues, products: List<Product>, onProduct
 }
 
 @Composable
-fun ProductDetail(
-    paddingValues: PaddingValues, 
-    product: Product, 
-    vm: DetailViewModel, 
+fun ProductDetailView(
+    paddingValues: PaddingValues,
+    product: Product,
+    vm: DetailViewModel,
     onProductEdited: () -> Unit
 ) {
     Column(
@@ -93,26 +93,26 @@ fun ProductDetail(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Editar Producto", style = MaterialTheme.typography.titleLarge)
+        Text("Edit Product", style = MaterialTheme.typography.titleLarge)
 
         OutlinedTextField(
             value = product.name,
             onValueChange = vm::onNameChange,
-            label = { Text("Nombre del producto") },
+            label = { Text("Product name") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = product.designer,
             onValueChange = vm::onDesignerChange,
-            label = { Text("Diseñador") },
+            label = { Text("Designer") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = product.price.toString(),
             onValueChange = vm::onPriceChange,
-            label = { Text("Precio") },
+            label = { Text("Price") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
@@ -131,10 +131,10 @@ fun ProductDetail(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(onClick = onProductEdited) {
-                Text("Editar producto")
+                Text("Edit product")
             }
             OutlinedButton(onClick = { vm.clearSelectedProduct() }) {
-                Text("Cancelar")
+                Text("Cancel")
             }
         }
     }

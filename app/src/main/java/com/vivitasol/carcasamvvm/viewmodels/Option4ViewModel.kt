@@ -1,5 +1,5 @@
 package com.vivitasol.carcasamvvm.viewmodels
-
+/*
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,3 +16,4 @@ class Option4ViewModel : ViewModel() {
         _ui.value = _ui.value.copy(suscripcion = enabled)
     }
 }
+*/

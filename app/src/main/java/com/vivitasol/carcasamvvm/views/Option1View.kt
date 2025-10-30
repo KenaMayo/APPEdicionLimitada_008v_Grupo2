@@ -1,5 +1,5 @@
 package com.vivitasol.carcasamvvm.views
-
+/*
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -245,3 +245,4 @@ private fun DemoOption1Preview() {
         Text("Tip: usa Spacer(height/width) para separar elementos.", style = MaterialTheme.typography.bodySmall)
     }
 }
+*/

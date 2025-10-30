@@ -1,5 +1,5 @@
 package com.vivitasol.carcasamvvm.views
-
+/*
 
 import android.Manifest
 import android.content.Context
@@ -170,3 +170,4 @@ private fun launchCamera(context: Context, onUriReady: (Uri) -> Unit) {
     val uri = createImageUri(context)
     onUriReady(uri)
 }
+*/

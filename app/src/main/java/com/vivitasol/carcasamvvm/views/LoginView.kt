@@ -1,19 +1,17 @@
 package com.vivitasol.carcasamvvm.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.vivitasol.carcasamvvm.R
+import com.vivitasol.carcasamvvm.navigation.Route
 import com.vivitasol.carcasamvvm.viewmodels.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -82,8 +80,10 @@ fun LoginView(
             Button(
                 onClick = {
                     if (vm.validate()) {
-                        // Navegar a HomeView
-                        navController.navigate("home")
+                        // Navegar al contenedor principal y limpiar la pila de navegación
+                        navController.navigate(Route.MenuShell.route) {
+                            popUpTo(Route.Login.route) { inclusive = true }
+                        }
                     } else {
                         scope.launch {
                             snackbarHostState.showSnackbar("Por favor, complete todos los campos")

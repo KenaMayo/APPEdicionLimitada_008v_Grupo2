@@ -1,6 +1,5 @@
 package com.vivitasol.carcasamvvm
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,8 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vivitasol.carcasamvvm.navigation.Route
+import com.vivitasol.carcasamvvm.views.LoginView
 import com.vivitasol.carcasamvvm.views.MenuShellView
-import com.vivitasol.carcasamvvm.views.WelcomeView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,16 +20,13 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = Route.Welcome.route
+                    startDestination = Route.Login.route
                 ) {
-                    composable(Route.Welcome.route) {
-                        WelcomeView(
-                            onStartClick = { navController.navigate(Route.MenuShell.route) }
-                        )
+                    composable(Route.Login.route) {
+                        LoginView(navController = navController)
                     }
-                    // MenuShell incluye su propio NavHost interno para Option1/2/3
                     composable(Route.MenuShell.route) {
-                        MenuShellView()
+                        MenuShellView(navController = navController)
                     }
                 }
             }
