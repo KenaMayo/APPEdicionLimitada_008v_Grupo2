@@ -1,9 +1,15 @@
 package com.vivitasol.carcasamvvm.views
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vivitasol.carcasamvvm.model.Product
 import com.vivitasol.carcasamvvm.viewmodels.DetailViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,20 +29,45 @@ fun DetailView(
     vm: DetailViewModel = viewModel()
 ) {
     val state by vm.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    var showAnimatedMessage by remember { mutableStateOf(false) }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) {
-        if (state.selectedProduct == null) {
-            ProductListView(paddingValues = it, products = state.products, onProductClick = vm::onProductSelected)
-        } else {
-            ProductDetailView(paddingValues = it, product = state.selectedProduct!!, vm = vm) {
-                vm.onProductEdited()
-                scope.launch {
-                    snackbarHostState.showSnackbar("Product edited")
+    if (showAnimatedMessage) {
+        LaunchedEffect(key1 = true) {
+            delay(1000) // Duración del mensaje en pantalla
+            showAnimatedMessage = false
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold {
+            padding ->
+            if (state.selectedProduct == null) {
+                ProductListView(paddingValues = padding, products = state.products, onProductClick = vm::onProductSelected)
+            } else {
+                ProductDetailView(paddingValues = padding, product = state.selectedProduct!!, vm = vm) {
+                    vm.onProductEdited()
+                    showAnimatedMessage = true
                 }
+            }
+        }
+
+        // Mensaje animado que aparece en el centro
+        AnimatedVisibility(
+            visible = showAnimatedMessage,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Text(
+                    text = "Producto editado correctamente",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(horizontal = 48.dp, vertical = 32.dp)
+                )
             }
         }
     }
@@ -51,7 +82,7 @@ fun ProductListView(paddingValues: PaddingValues, products: List<Product>, onPro
             .padding(16.dp)
     ) {
         Text(
-            "Recently Added Products",
+            "Productos Agregados",
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
         Spacer(Modifier.height(16.dp))
@@ -71,7 +102,7 @@ fun ProductListView(paddingValues: PaddingValues, products: List<Product>, onPro
                     ) {
                         Text(product.name, style = MaterialTheme.typography.titleMedium)
                         Spacer(Modifier.weight(1f))
-                        Text("View details", style = MaterialTheme.typography.labelLarge)
+                        Text("Ver detalles", style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -93,26 +124,26 @@ fun ProductDetailView(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Edit Product", style = MaterialTheme.typography.titleLarge)
+        Text("Editar Producto", style = MaterialTheme.typography.titleLarge)
 
         OutlinedTextField(
             value = product.name,
             onValueChange = vm::onNameChange,
-            label = { Text("Product name") },
+            label = { Text("Nombre del producto") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = product.designer,
             onValueChange = vm::onDesignerChange,
-            label = { Text("Designer") },
+            label = { Text("Diseñador") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = product.price.toString(),
             onValueChange = vm::onPriceChange,
-            label = { Text("Price") },
+            label = { Text("Precio") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
@@ -131,10 +162,10 @@ fun ProductDetailView(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(onClick = onProductEdited) {
-                Text("Edit product")
+                Text("Editar producto")
             }
             OutlinedButton(onClick = { vm.clearSelectedProduct() }) {
-                Text("Cancel")
+                Text("Cancelar")
             }
         }
     }

@@ -41,7 +41,7 @@ fun MenuShellView(navController: NavController) {
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("Detail") },
+                    label = { Text("Detalles") },
                     selected = currentInnerRoute(innerNavController) == Route.Detail.route,
                     onClick = {
                         innerNavController.navigate(Route.Detail.route) {
@@ -52,7 +52,7 @@ fun MenuShellView(navController: NavController) {
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("Create Product") },
+                    label = { Text("Crear Producto") },
                     selected = currentInnerRoute(innerNavController) == Route.CreateProduct.route,
                     onClick = {
                         innerNavController.navigate(Route.CreateProduct.route) {
@@ -79,7 +79,7 @@ fun MenuShellView(navController: NavController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Limited Edition") },
+                    title = { Text("Edición Limitada") },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {

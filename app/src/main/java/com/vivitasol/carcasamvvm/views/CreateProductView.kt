@@ -6,7 +6,13 @@ import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,7 +28,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.vivitasol.carcasamvvm.viewmodels.CreateProductViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,12 +41,18 @@ fun CreateProductView(
 ) {
     val state = vm.state.collectAsState().value
     val errors = vm.errors.collectAsState().value
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var showAnimatedMessage by remember { mutableStateOf(false) }
 
     var hasCameraPermission by rememberSaveable { mutableStateOf(false) }
     var pendingImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+
+    if (showAnimatedMessage) {
+        LaunchedEffect(key1 = true) {
+            delay(1000)
+            showAnimatedMessage = false
+        }
+    }
 
     val takePictureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -64,119 +76,134 @@ fun CreateProductView(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text("Crear Nuevo Producto", style = MaterialTheme.typography.titleLarge)
-
-            OutlinedTextField(
-                value = state.name,
-                onValueChange = vm::onNameChange,
-                label = { Text("Nombre del producto") },
-                isError = errors.name != null,
-                supportingText = { if (errors.name != null) Text(errors.name!!) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = state.designer,
-                onValueChange = vm::onDesignerChange,
-                label = { Text("Diseñador") },
-                isError = errors.designer != null,
-                supportingText = { if (errors.designer != null) Text(errors.designer!!) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = state.price,
-                onValueChange = vm::onPriceChange,
-                label = { Text("Precio") },
-                isError = errors.price != null,
-                supportingText = { if (errors.price != null) Text(errors.price!!) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = state.stock,
-                onValueChange = vm::onStockChange,
-                label = { Text("Stock") },
-                isError = errors.stock != null,
-                supportingText = { if (errors.stock != null) Text(errors.stock!!) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Card(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold {
+            padding ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 180.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (state.imageUri != null) {
-                    AsyncImage(
-                        model = state.imageUri,
-                        contentDescription = "Foto del producto",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(240.dp)
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(240.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Aún no hay foto")
-                    }
-                }
-            }
-            if (errors.image != null) {
-                Text(errors.image!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-            }
+                Text("Crear Nuevo Producto", style = MaterialTheme.typography.titleLarge)
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                OutlinedTextField(
+                    value = state.name,
+                    onValueChange = vm::onNameChange,
+                    label = { Text("Nombre del producto") },
+                    isError = errors.name != null,
+                    supportingText = { if (errors.name != null) Text(errors.name!!) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = state.designer,
+                    onValueChange = vm::onDesignerChange,
+                    label = { Text("Diseñador") },
+                    isError = errors.designer != null,
+                    supportingText = { if (errors.designer != null) Text(errors.designer!!) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = state.price,
+                    onValueChange = vm::onPriceChange,
+                    label = { Text("Precio") },
+                    isError = errors.price != null,
+                    supportingText = { if (errors.price != null) Text(errors.price!!) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = state.stock,
+                    onValueChange = vm::onStockChange,
+                    label = { Text("Stock") },
+                    isError = errors.stock != null,
+                    supportingText = { if (errors.stock != null) Text(errors.stock!!) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 180.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    if (state.imageUri != null) {
+                        AsyncImage(
+                            model = state.imageUri,
+                            contentDescription = "Foto del producto",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(240.dp)
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(240.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Aún no hay foto")
+                        }
+                    }
+                }
+                if (errors.image != null) {
+                    Text(errors.image!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            if (hasCameraPermission) {
+                                launchCamera(context) { tempUri ->
+                                    pendingImageUri = tempUri
+                                    takePictureLauncher.launch(tempUri)
+                                }
+                            } else {
+                                permissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        }
+                    ) {
+                        Text("Tomar Foto")
+                    }
+                    Button(
+                        onClick = {
+                            if (vm.validate()) {
+                                showAnimatedMessage = true
+                                vm.reset()
+                            }
+                        }
+                    ) {
+                        Text("Agregar producto", fontSize = 12.sp)
+                    }
+                }
+            }
+        }
+
+        // Mensaje animado que aparece en el centro
+        AnimatedVisibility(
+            visible = showAnimatedMessage,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
-                Button(
-                    onClick = {
-                        if (hasCameraPermission) {
-                            launchCamera(context) { tempUri ->
-                                pendingImageUri = tempUri
-                                takePictureLauncher.launch(tempUri)
-                            }
-                        } else {
-                            permissionLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                    }
-                ) {
-                    Text("Tomar Foto")
-                }
-                Button(
-                    onClick = {
-                        if (vm.validate()) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Producto creado")
-                            }
-                            vm.reset()
-                        } else {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Por favor, complete todos los campos")
-                            }
-                        }
-                    }
-                ) {
-                    Text("Agregar producto", fontSize = 12.sp)
-                }
+                Text(
+                    text = "Producto creado",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(horizontal = 48.dp, vertical = 32.dp)
+                )
             }
         }
     }
