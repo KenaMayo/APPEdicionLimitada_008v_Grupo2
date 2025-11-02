@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -174,7 +175,7 @@ fun CreateProductView(
                         }
                     }
                 ) {
-                    Text("Agregar producto")
+                    Text("Agregar producto", fontSize = 12.sp)
                 }
             }
         }
