@@ -1,15 +1,24 @@
 package com.vivitasol.carcasamvvm.views
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.vivitasol.carcasamvvm.R
 import com.vivitasol.carcasamvvm.navigation.Route
 import kotlinx.coroutines.launch
 
@@ -23,12 +32,23 @@ fun MenuShellView(navController: NavController) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Text(
-                    text = "Menu",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp)
-                )
+            ModalDrawerSheet(
+                modifier = Modifier.width(250.dp) // Ancho del menú reducido
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logoedicionlimitadapng),
+                        contentDescription = "Edición Limitada Logo",
+                        modifier = Modifier.height(50.dp)
+                    )
+                }
+                Divider()
                 NavigationDrawerItem(
                     label = { Text("Home") },
                     selected = currentInnerRoute(innerNavController) == Route.Home.route,
@@ -41,7 +61,7 @@ fun MenuShellView(navController: NavController) {
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("Detalles") },
+                    label = { Text("Detail") },
                     selected = currentInnerRoute(innerNavController) == Route.Detail.route,
                     onClick = {
                         innerNavController.navigate(Route.Detail.route) {
