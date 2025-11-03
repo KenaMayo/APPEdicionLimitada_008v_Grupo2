@@ -61,7 +61,7 @@ fun MenuShellView(navController: NavController) {
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("Detail") },
+                    label = { Text("Detalles") },
                     selected = currentInnerRoute(innerNavController) == Route.Detail.route,
                     onClick = {
                         innerNavController.navigate(Route.Detail.route) {

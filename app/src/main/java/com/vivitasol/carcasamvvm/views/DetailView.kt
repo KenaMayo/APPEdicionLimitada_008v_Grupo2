@@ -100,7 +100,7 @@ fun ProductListView(paddingValues: PaddingValues, products: List<Product>, onPro
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(product.name, style = MaterialTheme.typography.titleMedium)
+                        Text(product.name, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
                         Spacer(Modifier.weight(1f))
                         Text("Ver detalles", style = MaterialTheme.typography.labelLarge)
                     }

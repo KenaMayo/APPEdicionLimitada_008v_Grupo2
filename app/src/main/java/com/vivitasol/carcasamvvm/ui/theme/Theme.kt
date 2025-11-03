@@ -11,7 +11,7 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = White, // Color principal para botones de elementos activos
-    onPrimary = Black, // Colorr de texto encima del color primario
+    onPrimary = Black, // Color de texto encima del color primario
     background = Black, // Fondo principal de la app
     onBackground = White, // Color de texto encima del fondo
     surface = DarkGray, // Color de superficies como Cards
