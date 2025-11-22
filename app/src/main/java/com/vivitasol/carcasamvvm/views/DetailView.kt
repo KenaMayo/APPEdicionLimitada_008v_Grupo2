@@ -1,5 +1,6 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,20 +16,25 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.model.Product
 import com.vivitasol.carcasamvvm.viewmodels.DetailViewModel
+import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailView(
-    vm: DetailViewModel = viewModel()
-) {
+fun DetailView() {
+    val activity = LocalContext.current as Activity
+    val vm: DetailViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+
     val state by vm.state.collectAsState()
+    val allProducts by vm.allProducts.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
 
     if (showAnimatedMessage) {
@@ -42,7 +48,7 @@ fun DetailView(
         Scaffold {
             padding ->
             if (state.selectedProduct == null) {
-                ProductListView(paddingValues = padding, products = state.products, onProductClick = vm::onProductSelected)
+                ProductListView(paddingValues = padding, products = allProducts, onProductClick = vm::onProductSelected)
             } else {
                 ProductDetailView(paddingValues = padding, product = state.selectedProduct!!, vm = vm) {
                     vm.onProductEdited()

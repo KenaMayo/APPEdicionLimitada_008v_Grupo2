@@ -1,5 +1,6 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.app.Activity
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,19 +20,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.model.Product
 import com.vivitasol.carcasamvvm.viewmodels.HomeViewModel
+import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView(
-    vm: HomeViewModel = viewModel()
-) {
-    val products = vm.products.collectAsState().value
+fun HomeView() {
+    val activity = LocalContext.current as Activity
+    val vm: HomeViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+
+    val products by vm.products.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
 

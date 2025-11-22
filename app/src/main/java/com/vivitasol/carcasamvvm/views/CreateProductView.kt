@@ -1,6 +1,7 @@
 package com.vivitasol.carcasamvvm.views
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
@@ -27,7 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.viewmodels.CreateProductViewModel
+import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
 import java.io.File
 import java.text.SimpleDateFormat
@@ -36,12 +39,12 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateProductView(
-    vm: CreateProductViewModel = viewModel()
-) {
+fun CreateProductView() {
+    val activity = LocalContext.current as Activity
+    val vm: CreateProductViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+
     val state = vm.state.collectAsState().value
     val errors = vm.errors.collectAsState().value
-    val context = LocalContext.current
     var showAnimatedMessage by remember { mutableStateOf(false) }
 
     var hasCameraPermission by rememberSaveable { mutableStateOf(false) }
@@ -69,7 +72,7 @@ fun CreateProductView(
     ) { granted ->
         hasCameraPermission = granted
         if (granted) {
-            launchCamera(context) { tempUri ->
+            launchCamera(activity) { tempUri ->
                 pendingImageUri = tempUri
                 takePictureLauncher.launch(tempUri)
             }
@@ -162,7 +165,7 @@ fun CreateProductView(
                     Button(
                         onClick = {
                             if (hasCameraPermission) {
-                                launchCamera(context) { tempUri ->
+                                launchCamera(activity) { tempUri ->
                                     pendingImageUri = tempUri
                                     takePictureLauncher.launch(tempUri)
                                 }
@@ -175,10 +178,8 @@ fun CreateProductView(
                     }
                     Button(
                         onClick = {
-                            if (vm.validate()) {
-                                showAnimatedMessage = true
-                                vm.reset()
-                            }
+                            vm.createProduct()
+                            showAnimatedMessage = true
                         }
                     ) {
                         Text("Agregar producto", fontSize = 12.sp)

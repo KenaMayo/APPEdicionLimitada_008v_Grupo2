@@ -1,25 +1,33 @@
 package com.vivitasol.carcasamvvm.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.vivitasol.carcasamvvm.R
+import com.vivitasol.carcasamvvm.data.ProductRepository
 import com.vivitasol.carcasamvvm.model.Product
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products = _products.asStateFlow()
+class HomeViewModel(private val repository: ProductRepository) : ViewModel() {
+
+    val products: StateFlow<List<Product>> = repository.allProducts
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {
-        _products.value = listOf(
-            Product(1, "Chaqueta Jeans", "Diseñador A", 299.99, 10, R.drawable.chaquetajeans),
-            Product(2, "Pendientes Rubi", "Diseñador B", 499.99, 5, R.drawable.aros),
-            Product(3, "Blusa de Seda", "Diseñador C", 199.99, 15, R.drawable.blusa),
-            Product(4, "Chaqueta Unisex", "Diseñador A", 149.99, 20, R.drawable.chaquetaunisex),
-            Product(5, "Poleron con Capucha", "Diseñador D", 179.99, 12, R.drawable.poleroncapucha),
-            Product(6, "Sweter de Hilo", "Diseñador B", 699.99, 8, R.drawable.sweter),
-            Product(7, "Boina", "Diseñador C", 129.99, 25, R.drawable.boina),
-            Product(8, "Top de Cuerina", "Diseñador D", 349.99, 7, R.drawable.top)
-        )
+        // Si la base de datos está vacía, la llenamos con datos de ejemplo.
+        viewModelScope.launch {
+            if (repository.count() == 0) {
+                repository.insert(Product(name = "Vestido Floral", designer = "Diseñador A", price = 299.99, stock = 10, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Chaqueta de Cuero", designer = "Diseñador B", price = 499.99, stock = 5, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Pantalón de Seda", designer = "Diseñador C", price = 199.99, stock = 15, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Blusa de Encaje", designer = "Diseñador A", price = 149.99, stock = 20, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Falda Plisada", designer = "Diseñador D", price = 179.99, stock = 12, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Abrigo de Lana", designer = "Diseñador B", price = 699.99, stock = 8, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Camisa de Lino", designer = "Diseñador C", price = 129.99, stock = 25, imageRes = R.drawable.servel))
+                repository.insert(Product(name = "Bolso de Piel", designer = "Diseñador D", price = 349.99, stock = 7, imageRes = R.drawable.servel))
+            }
+        }
     }
 }
