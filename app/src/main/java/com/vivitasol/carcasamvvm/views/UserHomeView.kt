@@ -1,20 +1,47 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,15 +53,23 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.model.Product
-import com.vivitasol.carcasamvvm.viewmodels.HomeViewModel
+import com.vivitasol.carcasamvvm.viewmodels.CartViewModel
+import com.vivitasol.carcasamvvm.viewmodels.UserHomeViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
+import java.text.NumberFormat
+import java.util.Locale
 
+fun formatPrice(price: Double): String {
+    return NumberFormat.getCurrencyInstance(Locale("es", "CL")).format(price)
+}
+
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView() {
+fun UserHomeView(cartViewModel: CartViewModel) {
     val activity = LocalContext.current as Activity
-    val vm: HomeViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+    val vm: UserHomeViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
 
     val products by vm.products.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
@@ -62,7 +97,10 @@ fun HomeView() {
                     ProductCard(
                         product = product,
                         onProductClick = { selectedProduct = product },
-                        onAddToCart = { showAnimatedMessage = true }
+                        onAddToCart = {
+                            cartViewModel.addProduct(product)
+                            showAnimatedMessage = true
+                        }
                     )
                 }
             }
@@ -73,11 +111,12 @@ fun HomeView() {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            selectedProduct?.let {
+            selectedProduct?.let { product ->
                 ProductDetailPopup(
-                    product = it,
+                    product = product,
                     onDismiss = { selectedProduct = null },
                     onAddToCart = {
+                        cartViewModel.addProduct(product)
                         selectedProduct = null
                         showAnimatedMessage = true
                     }
@@ -97,7 +136,7 @@ fun HomeView() {
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Text(
-                    text = "Producto agregado",
+                    text = "Producto agregado al carrito",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(horizontal = 48.dp, vertical = 32.dp)
                 )
@@ -156,7 +195,7 @@ private fun ProductDetailPopup(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.6f))
-            .clickable( // Clic fuera de la tarjeta para cerrar
+            .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onDismiss
@@ -166,7 +205,7 @@ private fun ProductDetailPopup(
         Card(
             modifier = Modifier
                 .padding(32.dp)
-                .clickable(enabled = false, onClick = {}), // Evita que el clic se propague al fondo
+                .clickable(enabled = false, onClick = {}),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {

@@ -5,11 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.vivitasol.carcasamvvm.model.Product
+import com.vivitasol.carcasamvvm.model.User
 
-@Database(entities = [Product::class], version = 1, exportSchema = false)
+@Database(entities = [Product::class, User::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -21,7 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }
