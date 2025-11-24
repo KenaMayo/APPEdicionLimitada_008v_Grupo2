@@ -1,5 +1,6 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
@@ -30,6 +31,7 @@ import com.vivitasol.carcasamvvm.viewmodels.HomeViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
 
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView() {

@@ -50,7 +50,7 @@ fun UserCartView(vm: CartViewModel) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold {
-            if (state.products.isEmpty() && !state.showPurchaseSuccess) {
+            if (state.items.isEmpty() && !state.showPurchaseSuccess) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -65,15 +65,15 @@ fun UserCartView(vm: CartViewModel) {
                         .padding(16.dp)
                 ) {
                     LazyColumn(modifier = Modifier.weight(1f)) {
-                        items(state.products) { product ->
+                        items(state.items) { cartItem ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(product.name)
-                                Text(text = formatPrice(product.price))
+                                Text("${cartItem.product.name} (x${cartItem.quantity})")
+                                Text(text = formatPrice(cartItem.product.price * cartItem.quantity))
                             }
                             Divider()
                         }
@@ -90,7 +90,7 @@ fun UserCartView(vm: CartViewModel) {
                     Button(
                         onClick = { vm.simulatePurchase() },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = state.products.isNotEmpty()
+                        enabled = state.items.isNotEmpty()
                     ) {
                         Text("Realizar compra")
                     }

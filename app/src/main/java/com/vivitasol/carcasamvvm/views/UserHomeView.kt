@@ -70,6 +70,7 @@ fun formatPrice(price: Double): String {
 fun UserHomeView(cartViewModel: CartViewModel) {
     val activity = LocalContext.current as Activity
     val vm: UserHomeViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+    val cartState by cartViewModel.state.collectAsState()
 
     val products by vm.products.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
@@ -94,12 +95,17 @@ fun UserHomeView(cartViewModel: CartViewModel) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(products) { product ->
+                    val cartItem = cartState.items.find { it.product.id == product.id }
+                    val quantityInCart = cartItem?.quantity ?: 0
+
                     ProductCard(
                         product = product,
+                        quantityInCart = quantityInCart,
                         onProductClick = { selectedProduct = product },
                         onAddToCart = {
-                            cartViewModel.addProduct(product)
-                            showAnimatedMessage = true
+                            if (cartViewModel.addProduct(product)) {
+                                showAnimatedMessage = true
+                            }
                         }
                     )
                 }
@@ -112,13 +118,18 @@ fun UserHomeView(cartViewModel: CartViewModel) {
             exit = fadeOut()
         ) {
             selectedProduct?.let { product ->
+                val cartItem = cartState.items.find { it.product.id == product.id }
+                val quantityInCart = cartItem?.quantity ?: 0
+
                 ProductDetailPopup(
                     product = product,
+                    quantityInCart = quantityInCart,
                     onDismiss = { selectedProduct = null },
                     onAddToCart = {
-                        cartViewModel.addProduct(product)
+                        if (cartViewModel.addProduct(product)) {
+                            showAnimatedMessage = true
+                        }
                         selectedProduct = null
-                        showAnimatedMessage = true
                     }
                 )
             }
@@ -148,6 +159,7 @@ fun UserHomeView(cartViewModel: CartViewModel) {
 @Composable
 private fun ProductCard(
     product: Product,
+    quantityInCart: Int,
     onProductClick: () -> Unit,
     onAddToCart: () -> Unit
 ) {
@@ -170,11 +182,11 @@ private fun ProductCard(
             Text(text = product.name, style = MaterialTheme.typography.titleLarge)
             Text(text = "by ${product.designer}", style = MaterialTheme.typography.bodyLarge)
             Text(text = formatPrice(product.price), style = MaterialTheme.typography.headlineSmall)
-            Text(text = "Stock: ${product.stock}", style = MaterialTheme.typography.labelMedium)
+            Text(text = "Stock: ${product.stock - quantityInCart}", style = MaterialTheme.typography.labelMedium)
             Button(
                 onClick = onAddToCart,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = product.stock > 0,
+                enabled = product.stock > quantityInCart,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -189,6 +201,7 @@ private fun ProductCard(
 @Composable
 private fun ProductDetailPopup(
     product: Product,
+    quantityInCart: Int,
     onDismiss: () -> Unit,
     onAddToCart: () -> Unit
 ) {
@@ -227,11 +240,11 @@ private fun ProductDetailPopup(
                 Text(text = product.name, style = MaterialTheme.typography.titleLarge)
                 Text(text = "by ${product.designer}", style = MaterialTheme.typography.bodyLarge)
                 Text(text = formatPrice(product.price), style = MaterialTheme.typography.headlineSmall)
-                Text(text = "Stock: ${product.stock}", style = MaterialTheme.typography.labelMedium)
+                Text(text = "Stock: ${product.stock - quantityInCart}", style = MaterialTheme.typography.labelMedium)
                 Button(
                     onClick = onAddToCart,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = product.stock > 0,
+                    enabled = product.stock > quantityInCart,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
