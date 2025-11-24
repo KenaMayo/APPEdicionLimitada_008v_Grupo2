@@ -1,10 +1,13 @@
 package com.vivitasol.carcasamvvm.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vivitasol.carcasamvvm.data.ProductRepository
 import com.vivitasol.carcasamvvm.model.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class CartState(
     val products: List<Product> = emptyList(),
@@ -12,7 +15,7 @@ data class CartState(
     val showPurchaseSuccess: Boolean = false
 )
 
-class CartViewModel : ViewModel() {
+class CartViewModel(private val repository: ProductRepository) : ViewModel() {
     private val _state = MutableStateFlow(CartState())
     val state = _state.asStateFlow()
 
@@ -25,7 +28,13 @@ class CartViewModel : ViewModel() {
     }
 
     fun simulatePurchase() {
-        _state.update { it.copy(products = emptyList(), total = 0.0, showPurchaseSuccess = true) }
+        viewModelScope.launch {
+            _state.value.products.forEach { product ->
+                val updatedProduct = product.copy(stock = product.stock - 1)
+                repository.update(updatedProduct)
+            }
+            _state.update { it.copy(products = emptyList(), total = 0.0, showPurchaseSuccess = true) }
+        }
     }
 
     fun purchaseMessageShown() {

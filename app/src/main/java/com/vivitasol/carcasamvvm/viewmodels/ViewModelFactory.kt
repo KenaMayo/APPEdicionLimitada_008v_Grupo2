@@ -22,6 +22,10 @@ class ViewModelFactory(private val repository: ProductRepository) : ViewModelPro
             @Suppress("UNCHECKED_CAST")
             return UserHomeViewModel(repository) as T
         }
+        if (modelClass.isAssignableFrom(CartViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return CartViewModel(repository) as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

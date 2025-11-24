@@ -30,7 +30,7 @@ sealed class LoginResult {
 }
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
-    private val userDao = AppDatabase.getDatabase(application).userDao()
+    private val clienteDao = AppDatabase.getDatabase(application).clienteDao()
     private val prefsRepo = PrefsRepo
 
     private val _state = MutableStateFlow(LoginState())
@@ -74,13 +74,13 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         viewModelScope.launch {
-            val user = userDao.findByEmail(currentState.email)
-            if (user == null || user.contrasena != currentState.pass) {
+            val cliente = clienteDao.findByEmail(currentState.email)
+            if (cliente == null || cliente.contrasena != currentState.pass) {
                 _errors.update { it.copy(general = "Correo o contraseña incorrectos") }
                 _loginResult.value = LoginResult.Error
             } else {
-                prefsRepo.setEmail(getApplication(), user.email)
-                if (user.email == "admin@edicionlimitada.cl") {
+                prefsRepo.setEmail(getApplication(), cliente.email)
+                if (cliente.email == "admin@edicionlimitada.cl") {
                     _loginResult.value = LoginResult.AdminSuccess
                 } else {
                     _loginResult.value = LoginResult.UserSuccess

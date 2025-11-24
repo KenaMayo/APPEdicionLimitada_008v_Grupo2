@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.vivitasol.carcasamvvm.model.Cliente
 import com.vivitasol.carcasamvvm.model.Product
-import com.vivitasol.carcasamvvm.model.User
 
-@Database(entities = [Product::class, User::class], version = 3, exportSchema = false)
+@Database(entities = [Product::class, Cliente::class], version = 6, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
-    abstract fun userDao(): UserDao
+    abstract fun clienteDao(): ClienteDao
 
     companion object {
         @Volatile

@@ -73,9 +73,9 @@ fun HomeView() {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            selectedProduct?.let {
+            selectedProduct?.let { product ->
                 ProductDetailPopup(
-                    product = it,
+                    product = product,
                     onDismiss = { selectedProduct = null },
                     onAddToCart = {
                         selectedProduct = null
@@ -135,6 +135,7 @@ private fun ProductCard(
             Button(
                 onClick = onAddToCart,
                 modifier = Modifier.fillMaxWidth(),
+                enabled = product.stock > 0,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -191,6 +192,7 @@ private fun ProductDetailPopup(
                 Button(
                     onClick = onAddToCart,
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = product.stock > 0,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary

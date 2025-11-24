@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.vivitasol.carcasamvvm.model.User
+import com.vivitasol.carcasamvvm.model.Cliente
 
 @Dao
-interface UserDao {
+interface ClienteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: User)
+    suspend fun insert(cliente: Cliente)
 
-    @Query("SELECT * FROM users WHERE email = :email")
-    suspend fun findByEmail(email: String): User?
+    @Query("SELECT * FROM clientes WHERE email = :email")
+    suspend fun findByEmail(email: String): Cliente?
 }

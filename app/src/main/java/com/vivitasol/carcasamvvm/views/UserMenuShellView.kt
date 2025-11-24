@@ -1,5 +1,6 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.app.Activity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
@@ -25,9 +26,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.data.PrefsRepo
 import com.vivitasol.carcasamvvm.navigation.Route
 import com.vivitasol.carcasamvvm.viewmodels.CartViewModel
+import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,8 +38,9 @@ import kotlinx.coroutines.launch
 fun UserMenuShellView(navController: NavController) {
     val innerNavController = rememberNavController()
     val context = LocalContext.current
+    val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
-    val cartViewModel: CartViewModel = viewModel()
+    val cartViewModel: CartViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
 
     Scaffold(
         topBar = {
@@ -89,7 +93,8 @@ fun UserMenuShellView(navController: NavController) {
         ) {
             composable("user_home") { UserHomeView(cartViewModel) }
             composable("user_cart") { UserCartView(cartViewModel) }
-            composable("user_profile") { UserProfileView() }
+            composable("user_profile") { UserProfileView(innerNavController) }
+            composable("edit_profile") { EditProfileView(innerNavController) }
         }
     }
 }
