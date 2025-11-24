@@ -21,8 +21,6 @@ data class Product(
     @ColumnInfo(name = "stock")
     val stock: Int,
 
-    // En una app real, aquí guardarías una URL o una ruta de archivo.
-    // Para este ejemplo, mantenemos el ID del recurso drawable.
-    @ColumnInfo(name = "image_res")
-    val imageRes: Int
+    @ColumnInfo(name = "image_uri")
+    val imageUri: String
 )

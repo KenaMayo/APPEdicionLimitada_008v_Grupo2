@@ -22,21 +22,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.model.Product
 import com.vivitasol.carcasamvvm.viewmodels.HomeViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
+import java.text.NumberFormat
+import java.util.Locale
 
 @SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView() {
     val activity = LocalContext.current as Activity
-    val vm: HomeViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+    val vm: HomeViewModel = viewModel(factory = ViewModelFactory(activity.application, (activity.application as LimitedEditionApp).repository))
 
     val products by vm.products.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
@@ -125,7 +127,7 @@ private fun ProductCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Image(
-                painter = painterResource(id = product.imageRes),
+                painter = rememberAsyncImagePainter(model = product.imageUri),
                 contentDescription = product.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth().height(180.dp).clip(RoundedCornerShape(8.dp))
@@ -182,7 +184,7 @@ private fun ProductDetailPopup(
                     Icon(Icons.Default.Close, contentDescription = "Cerrar")
                 }
                 Image(
-                    painter = painterResource(id = product.imageRes),
+                    painter = rememberAsyncImagePainter(model = product.imageUri),
                     contentDescription = product.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth().height(250.dp).clip(RoundedCornerShape(12.dp))
@@ -205,4 +207,8 @@ private fun ProductDetailPopup(
             }
         }
     }
+}
+
+fun formatPrice(price: Double): String {
+    return NumberFormat.getCurrencyInstance(Locale("es", "CL")).format(price)
 }

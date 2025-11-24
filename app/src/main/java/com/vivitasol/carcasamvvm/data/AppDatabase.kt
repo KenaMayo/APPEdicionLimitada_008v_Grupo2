@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.vivitasol.carcasamvvm.model.Cliente
 import com.vivitasol.carcasamvvm.model.Product
 
-@Database(entities = [Product::class, Cliente::class], version = 6, exportSchema = false)
+@Database(entities = [Product::class, Cliente::class], version = 7, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao

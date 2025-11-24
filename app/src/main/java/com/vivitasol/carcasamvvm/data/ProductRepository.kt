@@ -15,6 +15,10 @@ class ProductRepository(private val productoDao: ProductoDao) {
         productoDao.update(product)
     }
 
+    suspend fun delete(product: Product) {
+        productoDao.delete(product)
+    }
+
     suspend fun count(): Int {
         return productoDao.count()
     }

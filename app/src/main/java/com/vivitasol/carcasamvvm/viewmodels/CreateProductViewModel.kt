@@ -1,9 +1,9 @@
 package com.vivitasol.carcasamvvm.viewmodels
 
+import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.vivitasol.carcasamvvm.R
 import com.vivitasol.carcasamvvm.data.ProductRepository
 import com.vivitasol.carcasamvvm.model.Product
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,8 @@ data class CreateProductState(
     val designer: String = "",
     val price: String = "",
     val stock: String = "",
-    val imageUri: Uri? = null
+    val imageUri: Uri? = null,
+    val createSuccess: Boolean = false
 )
 
 data class CreateProductErrors(
@@ -27,7 +28,7 @@ data class CreateProductErrors(
     val image: String? = null
 )
 
-class CreateProductViewModel(private val repository: ProductRepository) : ViewModel() {
+class CreateProductViewModel(application: Application, private val repository: ProductRepository) : AndroidViewModel(application) {
     private val _state = MutableStateFlow(CreateProductState())
     val state = _state.asStateFlow()
 
@@ -68,10 +69,10 @@ class CreateProductViewModel(private val repository: ProductRepository) : ViewMo
                     designer = currentState.designer,
                     price = currentState.price.toDoubleOrNull() ?: 0.0,
                     stock = currentState.stock.toIntOrNull() ?: 0,
-                    imageRes = R.drawable.servel // Placeholder image
+                    imageUri = currentState.imageUri.toString()
                 )
                 repository.insert(newProduct)
-                reset()
+                _state.update { it.copy(createSuccess = true) }
             }
         }
     }

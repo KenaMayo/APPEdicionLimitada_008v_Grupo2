@@ -61,6 +61,15 @@ class DetailViewModel(private val repository: ProductRepository) : ViewModel() {
         }
     }
 
+    fun deleteProduct() {
+        viewModelScope.launch {
+            _state.value.selectedProduct?.let {
+                repository.delete(it)
+                clearSelectedProduct()
+            }
+        }
+    }
+
     fun clearSelectedProduct() {
         _state.update { it.copy(selectedProduct = null) }
     }

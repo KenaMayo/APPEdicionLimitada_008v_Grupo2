@@ -1,6 +1,7 @@
 package com.vivitasol.carcasamvvm.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,6 +23,9 @@ interface ProductoDao {
 
     @Update
     suspend fun update(product: Product)
+
+    @Delete
+    suspend fun delete(product: Product)
 
     @Query("DELETE FROM products")
     suspend fun deleteAll()

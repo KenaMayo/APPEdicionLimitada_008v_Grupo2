@@ -1,5 +1,6 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ import com.vivitasol.carcasamvvm.viewmodels.CartViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.launch
 
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserMenuShellView(navController: NavController) {
@@ -40,7 +42,9 @@ fun UserMenuShellView(navController: NavController) {
     val context = LocalContext.current
     val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
-    val cartViewModel: CartViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+    val application = activity.application as LimitedEditionApp
+    val repository = application.repository
+    val cartViewModel: CartViewModel = viewModel(factory = ViewModelFactory(application, repository))
 
     Scaffold(
         topBar = {

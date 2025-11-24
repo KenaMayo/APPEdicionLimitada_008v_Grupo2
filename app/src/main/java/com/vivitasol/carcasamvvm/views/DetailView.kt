@@ -1,5 +1,6 @@
 package com.vivitasol.carcasamvvm.views
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -27,15 +28,17 @@ import com.vivitasol.carcasamvvm.viewmodels.DetailViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
 
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailView() {
     val activity = LocalContext.current as Activity
-    val vm: DetailViewModel = viewModel(factory = ViewModelFactory((activity.application as LimitedEditionApp).repository))
+    val vm: DetailViewModel = viewModel(factory = ViewModelFactory(activity.application, (activity.application as LimitedEditionApp).repository))
 
     val state by vm.state.collectAsState()
     val allProducts by vm.allProducts.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
 
     if (showAnimatedMessage) {
         LaunchedEffect(key1 = true) {
@@ -50,10 +53,21 @@ fun DetailView() {
             if (state.selectedProduct == null) {
                 ProductListView(paddingValues = padding, products = allProducts, onProductClick = vm::onProductSelected)
             } else {
-                ProductDetailView(paddingValues = padding, product = state.selectedProduct!!, vm = vm) {
-                    vm.onProductEdited()
-                    showAnimatedMessage = true
-                }
+                ProductDetailView(
+                    paddingValues = padding, 
+                    product = state.selectedProduct!!, 
+                    vm = vm, 
+                    onProductEdited = {
+                        vm.onProductEdited()
+                        message = "Producto editado correctamente"
+                        showAnimatedMessage = true
+                    },
+                    onProductDeleted = {
+                        vm.deleteProduct()
+                        message = "Producto eliminado correctamente"
+                        showAnimatedMessage = true
+                    }
+                )
             }
         }
 
@@ -70,7 +84,7 @@ fun DetailView() {
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Text(
-                    text = "Producto editado correctamente",
+                    text = message,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(horizontal = 48.dp, vertical = 32.dp)
                 )
@@ -121,7 +135,8 @@ fun ProductDetailView(
     paddingValues: PaddingValues,
     product: Product,
     vm: DetailViewModel,
-    onProductEdited: () -> Unit
+    onProductEdited: () -> Unit,
+    onProductDeleted: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -173,6 +188,19 @@ fun ProductDetailView(
             OutlinedButton(onClick = { vm.clearSelectedProduct() }) {
                 Text("Cancelar")
             }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        Button(
+            onClick = onProductDeleted,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            )
+        ) {
+            Text("Eliminar producto")
         }
     }
 }

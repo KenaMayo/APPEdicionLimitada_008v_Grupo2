@@ -1,14 +1,15 @@
 package com.vivitasol.carcasamvvm.viewmodels
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.vivitasol.carcasamvvm.data.ProductRepository
 
-class ViewModelFactory(private val repository: ProductRepository) : ViewModelProvider.Factory {
+class ViewModelFactory(private val application: Application, private val repository: ProductRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return HomeViewModel(repository) as T
+            return HomeViewModel(application, repository) as T
         }
         if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
@@ -16,11 +17,11 @@ class ViewModelFactory(private val repository: ProductRepository) : ViewModelPro
         }
         if (modelClass.isAssignableFrom(CreateProductViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return CreateProductViewModel(repository) as T
+            return CreateProductViewModel(application, repository) as T
         }
         if (modelClass.isAssignableFrom(UserHomeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return UserHomeViewModel(repository) as T
+            return UserHomeViewModel(application, repository) as T
         }
         if (modelClass.isAssignableFrom(CartViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
