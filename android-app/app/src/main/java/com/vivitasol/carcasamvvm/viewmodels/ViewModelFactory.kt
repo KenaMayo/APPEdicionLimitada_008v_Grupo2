@@ -32,6 +32,9 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(CartViewModel::class.java) -> {
                 CartViewModel(productRepository) as T
             }
+            modelClass.isAssignableFrom(ClienteViewModel::class.java) -> {
+                ClienteViewModel() as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

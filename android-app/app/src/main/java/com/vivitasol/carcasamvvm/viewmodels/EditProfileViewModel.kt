@@ -76,11 +76,13 @@ class EditProfileViewModel(application: Application) : AndroidViewModel(applicat
             // }
 
             try {
-                val response = clienteService.updateCliente(currentCliente.id, currentCliente)
-                if (response.isSuccessful) {
-                    _state.update { it.copy(message = "Perfil actualizado con éxito", saveSuccess = true) }
-                } else {
-                    _state.update { it.copy(message = "Error al actualizar el perfil") }
+                currentCliente.id?.let {
+                    val response = clienteService.updateCliente(it, currentCliente)
+                    if (response.isSuccessful) {
+                        _state.update { it.copy(message = "Perfil actualizado con éxito", saveSuccess = true) }
+                    } else {
+                        _state.update { it.copy(message = "Error al actualizar el perfil") }
+                    }
                 }
             } catch (e: Exception) {
                 _state.update { it.copy(message = "Error de red: ${e.message}") }

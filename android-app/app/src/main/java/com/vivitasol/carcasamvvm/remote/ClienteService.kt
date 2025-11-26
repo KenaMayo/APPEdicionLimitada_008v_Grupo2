@@ -4,6 +4,7 @@ import com.vivitasol.carcasamvvm.model.Cliente
 import com.vivitasol.carcasamvvm.model.ClienteRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -23,9 +24,15 @@ interface ClienteService {
     @GET("clientes")
     suspend fun getClientes(): List<Cliente>
 
+    @GET("clientes/{id}")
+    suspend fun getCliente(@Path("id") id: String): Response<Cliente>
+
     @GET("clientes/search")
     suspend fun findByEmail(@Query("email") email: String): Response<Cliente>
 
     @PUT("clientes/{id}")
     suspend fun updateCliente(@Path("id") id: String, @Body cliente: Cliente): Response<Cliente>
+
+    @DELETE("clientes/{id}")
+    suspend fun deleteCliente(@Path("id") id: String): Response<Unit>
 }

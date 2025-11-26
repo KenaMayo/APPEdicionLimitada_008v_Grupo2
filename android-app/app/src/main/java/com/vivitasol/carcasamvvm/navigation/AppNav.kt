@@ -8,6 +8,7 @@ sealed class Route(val route: String) {
     object CreateProduct : Route("create_product")
     object MenuShell : Route("menu_shell") // Contenedor con drawer
     object UserMenuShell : Route("user_menu_shell") // Contenedor con drawer para usuarios
-    object ClienteDetail: Route("client_detail")
+    object ClienteList: Route("cliente_list")
+    object ClienteDetail: Route("cliente_detail/{clienteId}")
     object CreateCliente: Route("create_cliente")
 }
