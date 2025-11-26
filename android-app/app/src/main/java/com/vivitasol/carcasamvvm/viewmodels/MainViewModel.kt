@@ -22,22 +22,32 @@ class MainViewModel(private val clientRepository: ClientRepository, application:
     val startDestination = _startDestination.asStateFlow()
 
     init {
-        // *** PASO DE DEPURACIÓN ***
-        // Forzamos la ruta de inicio a Login para aislar el problema.
-        // Si la app arranca con esto, el problema está en la lógica de decisión de ruta.
-        _startDestination.value = StartDestination.Destination(Route.Login.route)
-
-        /*
         viewModelScope.launch {
             val email = PrefsRepo.getEmail(application).first()
             if (email == null) {
                 _startDestination.value = StartDestination.Destination(Route.Login.route)
             } else if (email == "admin@edicionlimitada.cl") {
+                // Si el email es el del admin, vamos directo al menú de admin
                 _startDestination.value = StartDestination.Destination(Route.MenuShell.route)
             } else {
+                // Para cualquier otro email, vamos al menú de usuario
                 _startDestination.value = StartDestination.Destination(Route.UserMenuShell.route)
             }
         }
-        */
     }
 }
+
+// Esta MainViewModelFactory ya no es necesaria, usaremos la ViewModelFactory unificada
+// La dejo aquí comentada por si la necesitamos, pero la eliminaremos en el siguiente paso.
+/*
+class MainViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            val clientRepository = (application as com.vivitasol.carcasamvvm.LimitedEditionApp).clientRepository
+            @Suppress("UNCHECKED_CAST")
+            return MainViewModel(clientRepository, application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+*/

@@ -12,17 +12,19 @@ import retrofit2.http.Query
 
 interface ClienteService {
 
+    // --- AUTH ENDPOINTS --- //
+    @POST("auth/register")
+    suspend fun register(@Body cliente: ClienteRequest): Response<Cliente>
+
+    @POST("auth/login")
+    suspend fun login(@Body credentials: Map<String, String>): Response<Cliente>
+
+    // --- CLIENTES ENDPOINTS --- //
     @GET("clientes")
     suspend fun getClientes(): List<Cliente>
 
-    @POST("clientes")
-    suspend fun createCliente(@Body cliente: ClienteRequest): Response<Unit> // Usamos Response<Unit> para saber si fue exitoso
-
     @GET("clientes/search")
-    suspend fun findByEmail(@Query("email") email: String): Response<Cliente> // Asumimos un endpoint de búsqueda
-
-    @POST("clientes/login")
-    suspend fun login(@Body loginInfo: Map<String, String>): Response<Cliente> // Body simple para email/pass
+    suspend fun findByEmail(@Query("email") email: String): Response<Cliente>
 
     @PUT("clientes/{id}")
     suspend fun updateCliente(@Path("id") id: String, @Body cliente: Cliente): Response<Cliente>

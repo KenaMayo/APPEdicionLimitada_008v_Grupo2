@@ -44,7 +44,8 @@ class ClienteViewModel : ViewModel() {
                     region = region,
                     contrasena = contrasena
                 )
-                val response = clienteService.createCliente(request)
+                // ¡CORREGIDO! La función en el service se llama 'register'.
+                val response = clienteService.register(request)
                 if (response.isSuccessful) {
                     // Si la llamada es exitosa, actualizamos el estado
                     _clienteCreado.value = true

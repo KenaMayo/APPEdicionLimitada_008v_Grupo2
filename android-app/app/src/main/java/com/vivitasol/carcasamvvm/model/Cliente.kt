@@ -7,7 +7,7 @@ data class Cliente(
     val id: String,
     val nombre: String,
     val email: String,
-    val contrasena: String,
+    val contrasena: String?, // ¡CORREGIDO! El campo ahora es opcional
     val comuna: String,
     val region: String
 )

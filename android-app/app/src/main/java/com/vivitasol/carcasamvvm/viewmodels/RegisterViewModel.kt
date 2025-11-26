@@ -71,7 +71,7 @@ class RegisterViewModel : ViewModel() {
             )
 
             try {
-                val response = clienteService.createCliente(request)
+                val response = clienteService.register(request) // ¡CORREGIDO!
                 if (response.isSuccessful) {
                     _registrationSuccess.value = true
                 } else {

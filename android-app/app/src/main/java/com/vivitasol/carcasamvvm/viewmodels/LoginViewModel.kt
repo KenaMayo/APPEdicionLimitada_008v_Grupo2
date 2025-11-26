@@ -52,22 +52,26 @@ class LoginViewModel(private val application: Application) : AndroidViewModel(ap
 
     fun login() {
         viewModelScope.launch {
+            val currentState = _state.value
             // Lógica de validación básica
-            if (_state.value.email.isBlank() || _state.value.pass.isBlank()) {
+            if (currentState.email.isBlank() || currentState.pass.isBlank()) {
                 _errors.value = LoginErrors(general = "Email y contraseña no pueden estar vacíos")
                 return@launch
             }
 
             try {
-                // ¡CORREGIDO! El nombre del campo debe ser "contrasena" para que coincida con el backend.
-                val loginInfo = mapOf("email" to _state.value.email, "contrasena" to _state.value.pass)
+                // ¡CORREGIDO! Limpiamos los datos antes de enviarlos, como en la especificación.
+                val loginInfo = mapOf(
+                    "email" to currentState.email.trim().lowercase(),
+                    "contrasena" to currentState.pass.trim()
+                )
                 val response = clienteService.login(loginInfo)
 
                 if (response.isSuccessful) {
                     val cliente = response.body()
                     PrefsRepo.setEmail(application, cliente?.email)
 
-                    if (_state.value.email == "admin@edicionlimitada.cl") {
+                    if (currentState.email.trim().lowercase() == "admin@edicionlimitada.cl") {
                         _loginResult.value = LoginResult.AdminSuccess
                     } else {
                         _loginResult.value = LoginResult.UserSuccess
