@@ -158,7 +158,7 @@ fun MenuShellView(navController: NavController) {
             ) {
                 composable(Route.Home.route) { HomeView() }
                 composable(Route.Detail.route) { DetailView() }
-                composable(Route.CreateProduct.route) { CreateProductView() }
+                composable(Route.CreateProduct.route) { CreateProductView(navController = innerNavController) }
                 composable(Route.ClienteList.route) { ClienteManagementView(innerPadding) }
                 composable(Route.CreateCliente.route) { CreateClienteView() }
             }
