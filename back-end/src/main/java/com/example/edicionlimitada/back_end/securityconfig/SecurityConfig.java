@@ -2,12 +2,13 @@ package com.example.edicionlimitada.back_end.securityconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Configuration
@@ -15,24 +16,32 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // para API REST
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/clientes").permitAll() // si permites registrar por /clientes
-                .anyRequest().permitAll() // provisorio: permite todo; cambia a .authenticated() si aplicas auth
+
+                // Rutas públicas
+                .requestMatchers("/auth/register").permitAll()
+                .requestMatchers("/auth/login").permitAll()
+
+                // PERMITIR TODAS LAS RUTAS DE CLIENTES
+                .requestMatchers("/clientes/**").permitAll()
+
+                // Resto protegido
+                .anyRequest().authenticated()
             )
-            .httpBasic(httpBasic -> httpBasic.disable())
+            .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(form -> form.disable());
 
         return http.build();
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
+
