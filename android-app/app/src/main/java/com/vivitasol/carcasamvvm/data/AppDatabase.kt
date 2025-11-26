@@ -8,17 +8,15 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.vivitasol.carcasamvvm.R
-import com.vivitasol.carcasamvvm.model.Cliente
 import com.vivitasol.carcasamvvm.model.Product
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Product::class, Cliente::class], version = 7, exportSchema = false)
+@Database(entities = [Product::class], version = 8, exportSchema = false) // VERSIÓN INCREMENTADA
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
-    abstract fun clienteDao(): ClienteDao
 
     companion object {
         @Volatile

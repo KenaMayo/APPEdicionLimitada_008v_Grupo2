@@ -33,7 +33,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun DetailView() {
     val activity = LocalContext.current as Activity
-    val vm: DetailViewModel = viewModel(factory = ViewModelFactory(activity.application, (activity.application as LimitedEditionApp).repository))
+    val application = activity.application as LimitedEditionApp
+    val vm: DetailViewModel = viewModel(factory = ViewModelFactory(application, application.repository, application.clientRepository))
 
     val state by vm.state.collectAsState()
     val allProducts by vm.allProducts.collectAsState()

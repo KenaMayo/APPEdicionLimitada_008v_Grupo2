@@ -1,15 +1,22 @@
 package com.vivitasol.carcasamvvm.viewmodels
 
 import android.app.Application
-import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.vivitasol.carcasamvvm.data.AppDatabase
 import com.vivitasol.carcasamvvm.data.PrefsRepo
+import com.vivitasol.carcasamvvm.remote.ApiClient
+import com.vivitasol.carcasamvvm.remote.ClienteService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+sealed class LoginResult {
+    object Neutral : LoginResult()
+    object AdminSuccess : LoginResult()
+    object UserSuccess : LoginResult()
+    data class Error(val message: String) : LoginResult()
+}
 
 data class LoginState(
     val email: String = "",
@@ -22,16 +29,9 @@ data class LoginErrors(
     val general: String? = null
 )
 
-sealed class LoginResult {
-    object Idle : LoginResult()
-    object AdminSuccess : LoginResult()
-    object UserSuccess : LoginResult()
-    object Error : LoginResult()
-}
+class LoginViewModel(private val application: Application) : AndroidViewModel(application) {
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
-    private val clienteDao = AppDatabase.getDatabase(application).clienteDao()
-    private val prefsRepo = PrefsRepo
+    private val clienteService = ApiClient.retrofit.create(ClienteService::class.java)
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -39,57 +39,49 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val _errors = MutableStateFlow(LoginErrors())
     val errors = _errors.asStateFlow()
 
-    private val _loginResult = MutableStateFlow<LoginResult>(LoginResult.Idle)
+    private val _loginResult = MutableStateFlow<LoginResult>(LoginResult.Neutral)
     val loginResult = _loginResult.asStateFlow()
 
     fun onEmailChange(email: String) {
         _state.update { it.copy(email = email) }
-        _errors.update { it.copy(email = null, general = null) }
     }
 
     fun onPassChange(pass: String) {
         _state.update { it.copy(pass = pass) }
-        _errors.update { it.copy(pass = null, general = null) }
     }
 
     fun login() {
-        val currentState = _state.value
-        val emailError = if (currentState.email.isBlank()) {
-            "El correo es obligatorio"
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()) {
-            "El correo no es válido"
-        } else {
-            null
-        }
-
-        val passError = if (currentState.pass.isBlank()) {
-            "La contraseña es obligatoria"
-        } else {
-            null
-        }
-
-        if (emailError != null || passError != null) {
-            _errors.update { it.copy(email = emailError, pass = passError) }
-            return
-        }
-
         viewModelScope.launch {
-            val cliente = clienteDao.findByEmail(currentState.email)
-            if (cliente == null || cliente.contrasena != currentState.pass) {
-                _errors.update { it.copy(general = "Correo o contraseña incorrectos") }
-                _loginResult.value = LoginResult.Error
-            } else {
-                prefsRepo.setEmail(getApplication(), cliente.email)
-                if (cliente.email == "admin@edicionlimitada.cl") {
-                    _loginResult.value = LoginResult.AdminSuccess
+            // Lógica de validación básica
+            if (_state.value.email.isBlank() || _state.value.pass.isBlank()) {
+                _errors.value = LoginErrors(general = "Email y contraseña no pueden estar vacíos")
+                return@launch
+            }
+
+            try {
+                // ¡CORREGIDO! El nombre del campo debe ser "contrasena" para que coincida con el backend.
+                val loginInfo = mapOf("email" to _state.value.email, "contrasena" to _state.value.pass)
+                val response = clienteService.login(loginInfo)
+
+                if (response.isSuccessful) {
+                    val cliente = response.body()
+                    PrefsRepo.setEmail(application, cliente?.email)
+
+                    if (_state.value.email == "admin@edicionlimitada.cl") {
+                        _loginResult.value = LoginResult.AdminSuccess
+                    } else {
+                        _loginResult.value = LoginResult.UserSuccess
+                    }
                 } else {
-                    _loginResult.value = LoginResult.UserSuccess
+                    _loginResult.value = LoginResult.Error("Credenciales incorrectas")
                 }
+            } catch (e: Exception) {
+                _loginResult.value = LoginResult.Error("Error de red: ${e.message}")
             }
         }
     }
 
     fun resetLoginResult() {
-        _loginResult.value = LoginResult.Idle
+        _loginResult.value = LoginResult.Neutral
     }
 }

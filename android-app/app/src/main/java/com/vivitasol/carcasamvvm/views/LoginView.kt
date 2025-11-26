@@ -51,7 +51,7 @@ fun LoginView(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(loginResult) {
-        when (loginResult) {
+        when (val result = loginResult) { // Usamos una variable local para el smart cast
             is LoginResult.AdminSuccess -> {
                 navController.navigate(Route.MenuShell.route) {
                     popUpTo(Route.Login.route) { inclusive = true }
@@ -66,7 +66,8 @@ fun LoginView(
             }
             is LoginResult.Error -> {
                 scope.launch {
-                    snackbarHostState.showSnackbar(errors.general ?: "Error desconocido")
+                    // ¡CORREGIDO! Mostramos el mensaje de error que viene del ViewModel
+                    snackbarHostState.showSnackbar(result.message)
                 }
                 vm.resetLoginResult()
             }

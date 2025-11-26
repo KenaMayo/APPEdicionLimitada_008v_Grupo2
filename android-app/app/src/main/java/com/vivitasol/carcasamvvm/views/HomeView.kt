@@ -27,18 +27,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.model.Product
+import com.vivitasol.carcasamvvm.utils.formatPrice
 import com.vivitasol.carcasamvvm.viewmodels.HomeViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
-import java.text.NumberFormat
-import java.util.Locale
 
 @SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView() {
     val activity = LocalContext.current as Activity
-    val vm: HomeViewModel = viewModel(factory = ViewModelFactory(activity.application, (activity.application as LimitedEditionApp).repository))
+    val application = activity.application as LimitedEditionApp
+    val vm: HomeViewModel = viewModel(factory = ViewModelFactory(application, application.repository, application.clientRepository))
 
     val products by vm.products.collectAsState()
     var showAnimatedMessage by remember { mutableStateOf(false) }
@@ -207,8 +207,4 @@ private fun ProductDetailPopup(
             }
         }
     }
-}
-
-fun formatPrice(price: Double): String {
-    return NumberFormat.getCurrencyInstance(Locale("es", "CL")).format(price)
 }

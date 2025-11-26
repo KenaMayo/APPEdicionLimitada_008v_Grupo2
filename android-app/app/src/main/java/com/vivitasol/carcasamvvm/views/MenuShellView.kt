@@ -82,6 +82,28 @@ fun MenuShellView(navController: NavController) {
                         scope.launch { drawerState.close() }
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Detalles Cliente") },
+                    selected = currentInnerRoute(innerNavController) == Route.ClienteDetail.route,
+                    onClick = {
+                        innerNavController.navigate(Route.ClienteDetail.route) {
+                            popUpTo(Route.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                        scope.launch { drawerState.close() }
+                    }
+                )
+                NavigationDrawerItem(
+                    label = { Text("Crear Cliente") },
+                    selected = currentInnerRoute(innerNavController) == Route.CreateCliente.route,
+                    onClick = {
+                        innerNavController.navigate(Route.CreateCliente.route) {
+                            popUpTo(Route.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                        scope.launch { drawerState.close() }
+                    }
+                )
                 Divider()
                 NavigationDrawerItem(
                     label = { Text("Cerrar sesión") },
@@ -120,6 +142,8 @@ fun MenuShellView(navController: NavController) {
                 composable(Route.Home.route) { HomeView() }
                 composable(Route.Detail.route) { DetailView() }
                 composable(Route.CreateProduct.route) { CreateProductView() }
+                composable(Route.ClienteDetail.route) { ClienteDetailView() }
+                composable(Route.CreateCliente.route) { CreateClienteView() }
             }
         }
     }

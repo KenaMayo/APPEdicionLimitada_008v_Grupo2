@@ -53,19 +53,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.vivitasol.carcasamvvm.LimitedEditionApp
 import com.vivitasol.carcasamvvm.model.Product
+import com.vivitasol.carcasamvvm.utils.formatPrice
 import com.vivitasol.carcasamvvm.viewmodels.CartViewModel
 import com.vivitasol.carcasamvvm.viewmodels.UserHomeViewModel
 import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import kotlinx.coroutines.delay
-import java.text.NumberFormat
-import java.util.Locale
 
 @SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserHomeView(cartViewModel: CartViewModel) {
     val activity = LocalContext.current as Activity
-    val vm: UserHomeViewModel = viewModel(factory = ViewModelFactory(activity.application, (activity.application as LimitedEditionApp).repository))
+    val application = activity.application as LimitedEditionApp
+    val vm: UserHomeViewModel = viewModel(factory = ViewModelFactory(application, application.repository, application.clientRepository))
     val cartState by cartViewModel.state.collectAsState()
 
     val products by vm.products.collectAsState()

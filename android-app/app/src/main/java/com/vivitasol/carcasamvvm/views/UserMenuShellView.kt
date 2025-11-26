@@ -43,8 +43,7 @@ fun UserMenuShellView(navController: NavController) {
     val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
     val application = activity.application as LimitedEditionApp
-    val repository = application.repository
-    val cartViewModel: CartViewModel = viewModel(factory = ViewModelFactory(application, repository))
+    val cartViewModel: CartViewModel = viewModel(factory = ViewModelFactory(application, application.repository, application.clientRepository))
 
     Scaffold(
         topBar = {

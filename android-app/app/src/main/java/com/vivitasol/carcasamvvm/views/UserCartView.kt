@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.vivitasol.carcasamvvm.utils.formatPrice
 import com.vivitasol.carcasamvvm.viewmodels.CartViewModel
 import kotlinx.coroutines.delay
 

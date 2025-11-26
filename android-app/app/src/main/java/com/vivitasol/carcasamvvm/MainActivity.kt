@@ -18,13 +18,17 @@ import com.vivitasol.carcasamvvm.navigation.Route
 import com.vivitasol.carcasamvvm.ui.theme.AppTheme
 import com.vivitasol.carcasamvvm.viewmodels.MainViewModel
 import com.vivitasol.carcasamvvm.viewmodels.StartDestination
+import com.vivitasol.carcasamvvm.viewmodels.ViewModelFactory
 import com.vivitasol.carcasamvvm.views.LoginView
 import com.vivitasol.carcasamvvm.views.MenuShellView
 import com.vivitasol.carcasamvvm.views.RegisterView
 import com.vivitasol.carcasamvvm.views.UserMenuShellView
 
 class MainActivity : ComponentActivity() {
-    private val vm: MainViewModel by viewModels()
+    private val vm: MainViewModel by viewModels {
+        val app = application as LimitedEditionApp
+        ViewModelFactory(app, app.repository, app.clientRepository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

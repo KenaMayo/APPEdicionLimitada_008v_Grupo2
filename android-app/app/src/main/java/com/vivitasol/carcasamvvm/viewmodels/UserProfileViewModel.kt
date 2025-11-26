@@ -3,26 +3,33 @@ package com.vivitasol.carcasamvvm.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.vivitasol.carcasamvvm.data.AppDatabase
 import com.vivitasol.carcasamvvm.data.PrefsRepo
 import com.vivitasol.carcasamvvm.model.Cliente
+import com.vivitasol.carcasamvvm.remote.ApiClient
+import com.vivitasol.carcasamvvm.remote.ClienteService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
-    private val clienteDao = AppDatabase.getDatabase(application).clienteDao()
+    private val clienteService = ApiClient.retrofit.create(ClienteService::class.java)
 
     private val _cliente = MutableStateFlow<Cliente?>(null)
     val cliente = _cliente.asStateFlow()
 
-    fun loadCliente() {
+    init {
         viewModelScope.launch {
-            val email = PrefsRepo.getEmail(getApplication()).first()
+            val email = PrefsRepo.getEmail(application).first()
             if (email != null) {
-                _cliente.value = clienteDao.findByEmail(email)
+                try {
+                    val response = clienteService.findByEmail(email)
+                    if (response.isSuccessful) {
+                        _cliente.value = response.body()
+                    }
+                } catch (e: Exception) {
+                    // Manejar error de red
+                }
             }
         }
     }
