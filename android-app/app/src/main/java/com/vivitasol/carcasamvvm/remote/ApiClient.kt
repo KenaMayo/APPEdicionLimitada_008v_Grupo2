@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
 
-    private const val BASE_URL = "http://192.168.1.109:8080/"
+    private const val BASE_URL = "appedicionlimitada008vgrupo2-production.up.railway.app"
 
     // Interceptor para limpiar headers de autorización inválidos
     private val authCleanupInterceptor = Interceptor { chain ->

@@ -56,18 +56,22 @@ public class ClienteController {
 
 
     @GetMapping("/search")
-public ResponseEntity<?> findByEmail(@RequestParam String email) {
+    public ResponseEntity<?> findByEmail(@RequestParam String email) {
     email = email.trim().toLowerCase();
 
-    return service.findByEmail(email)
-            .<ResponseEntity<?>>map(cliente -> ResponseEntity.ok(cliente))
-            .orElseGet(() -> {
-                // Map manual (compatible con Java 8)
-                java.util.Map<String, String> error = new java.util.HashMap<>();
-                error.put("error", "Cliente no encontrado");
-                return ResponseEntity.status(404).body(error);
-            });
-}
+        return service.findByEmail(email)
+                .<ResponseEntity<?>>map(cliente -> ResponseEntity.ok(cliente))
+                .orElseGet(() -> {
+                    // Map manual (compatible con Java 8)
+                    java.util.Map<String, String> error = new java.util.HashMap<>();
+                    error.put("error", "Cliente no encontrado");
+                    return ResponseEntity.status(404).body(error);
+                });
+    }   
 
 
+    @GetMapping("/")
+    public String ping() {
+        return "Backend activo";
+    }
 }
