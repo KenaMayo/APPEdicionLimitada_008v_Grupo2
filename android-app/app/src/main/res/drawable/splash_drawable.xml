@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo negro -->
     <item android:drawable="@android:color/black" />
-    <item
-        android:width="200dp"
-        android:height="200dp"
-        android:drawable="@drawable/logoedicionlimitadapng"
-        android:gravity="center" />
+
+    <!-- Logo con un margen (inset) para forzar el escalado correcto -->
+    <item>
+        <inset
+            android:drawable="@drawable/logoedicionlimitadapng"
+            android:inset="30dp" />
+    </item>
+
 </layer-list>

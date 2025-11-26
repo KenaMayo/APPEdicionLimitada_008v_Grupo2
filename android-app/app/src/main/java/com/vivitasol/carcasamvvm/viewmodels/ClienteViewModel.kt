@@ -27,6 +27,17 @@ class ClienteViewModel : ViewModel() {
 
     private val clienteService = ApiClient.retrofit.create(ClienteService::class.java)
 
+    // --- Listas para los menús desplegables ---
+    val regions = listOf("Metropolitana", "Valparaíso", "Bíobío", "Maule", "Los Lagos", "La Araucanía")
+    val comunasByRegion = mapOf(
+        "Metropolitana" to listOf("Santiago", "Providencia", "Las Condes", "Ñuñoa", "Maipú", "Puente Alto", "La Florida", "Vitacura"),
+        "Valparaíso" to listOf("Valparaíso", "Viña del Mar", "Quilpué", "Villa Alemana", "Quillota"),
+        "Bíobío" to listOf("Concepción", "Talcahuano", "Hualpén", "Coronel", "Los Ángeles"),
+        "Maule" to listOf("Talca", "Curicó", "Linares", "Cauquenes"),
+        "Los Lagos" to listOf("Puerto Montt", "Osorno", "Puerto Varas", "Castro"),
+        "La Araucanía" to listOf("Temuco", "Padre Las Casas", "Villarrica", "Angol")
+    )
+
     init {
         getClientes()
     }
@@ -142,6 +153,6 @@ class ClienteViewModel : ViewModel() {
     }
 
     fun onRegionChange(region: String) {
-        _state.update { it.copy(selectedCliente = it.selectedCliente?.copy(region = region)) }
+        _state.update { it.copy(selectedCliente = it.selectedCliente?.copy(region = region, comuna = "")) }
     }
 }
