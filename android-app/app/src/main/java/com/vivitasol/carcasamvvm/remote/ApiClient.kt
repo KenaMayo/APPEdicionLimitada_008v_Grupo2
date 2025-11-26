@@ -20,6 +20,7 @@ object ApiClient {
 
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(NullOnEmptyConverterFactory()) // Añadido para manejar respuestas vacías
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

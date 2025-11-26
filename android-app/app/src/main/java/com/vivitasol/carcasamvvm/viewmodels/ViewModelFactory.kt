@@ -35,6 +35,12 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(ClienteViewModel::class.java) -> {
                 ClienteViewModel() as T
             }
+            modelClass.isAssignableFrom(UserProfileViewModel::class.java) -> {
+                UserProfileViewModel(application, clientRepository) as T
+            }
+            modelClass.isAssignableFrom(EditProfileViewModel::class.java) -> {
+                EditProfileViewModel(application) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

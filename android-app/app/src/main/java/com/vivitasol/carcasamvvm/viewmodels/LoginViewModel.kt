@@ -60,7 +60,6 @@ class LoginViewModel(private val application: Application) : AndroidViewModel(ap
             }
 
             try {
-                // ¡CORREGIDO! Limpiamos los datos antes de enviarlos, como en la especificación.
                 val loginInfo = mapOf(
                     "email" to currentState.email.trim().lowercase(),
                     "contrasena" to currentState.pass.trim()
@@ -68,8 +67,8 @@ class LoginViewModel(private val application: Application) : AndroidViewModel(ap
                 val response = clienteService.login(loginInfo)
 
                 if (response.isSuccessful) {
-                    val cliente = response.body()
-                    PrefsRepo.setEmail(application, cliente?.email)
+                    // Guardamos el email que el usuario introdujo, ya que sabemos que es válido.
+                    PrefsRepo.setEmail(application, currentState.email.trim().lowercase())
 
                     if (currentState.email.trim().lowercase() == "admin@edicionlimitada.cl") {
                         _loginResult.value = LoginResult.AdminSuccess
