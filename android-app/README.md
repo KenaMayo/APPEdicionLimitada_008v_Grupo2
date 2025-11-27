@@ -1,145 +1,504 @@
-# Edición Limitada
 
-**Edición Limitada** es una aplicación móvil desarrollada en **Android Studio con Kotlin y Jetpack Compose (Material 3)**.  
-Su propósito es ofrecer una interfaz funcional para la gestión de productos de una tienda de diseño independiente, abordando el proceso de registro, visualización y administración de productos.
 
-Este proyecto corresponde a la **Evaluación Parcial 2** de la asignatura, enfocada en el desarrollo de una interfaz móvil funcional con validaciones, navegación, uso de recursos nativos y almacenamiento local.
+# 📱 Edición Limitada — Aplicación Móvil + Backend Spring Boot
 
----
+Edición Limitada es una solución completa compuesta por:
 
-## Descripción general
+* **Aplicación móvil Android** desarrollada en *Kotlin + Jetpack Compose*
+* **Backend REST** desarrollado con *Spring Boot 3.5 + MongoDB*
+* **Despliegue en Railway + MongoDB Atlas**
 
-Al ingresar a la aplicación, el usuario se encuentra con una pantalla de **inicio de sesión**, que solicita correo y contraseña.  
-Tras autenticarse correctamente, se accede a la **pantalla principal de productos**, donde se pueden visualizar los artículos disponibles.  
-
-El menú lateral permite:
-- **Listar productos** y editarlos.  
-- **Agregar nuevos productos** ingresando su nombre, diseñador, precio y stock.  
-- **Capturar una foto** del producto utilizando la **cámara nativa** del dispositivo.  
-- **Cerrar sesión** y volver al login.
-
-La aplicación almacena los datos de manera **local**, simulando una base de datos integrada dentro del código, junto con las imágenes en la carpeta `drawable`.
+Su propósito es gestionar clientes, productos, autenticación y funcionalidades de compra para una tienda de diseño independiente.
 
 ---
 
-## Funcionalidades principales
+# 🧩 Índice
 
-### Inicio de sesión
-- Formulario validado con campos de correo y contraseña.  
-- Verificación básica antes de permitir el acceso.  
-
-### Gestión de productos
-- Visualización de productos existentes con su información principal.  
-- Edición de productos desde el menú lateral.  
-- Almacenamiento de imágenes dentro del proyecto.  
-
-### Agregar producto
-- Formulario con validaciones en todos los campos.  
-- Captura de imagen mediante la cámara nativa.  
-
-### Almacenamiento local
-- Persistencia simulada dentro de la aplicación.  
-- Sin dependencias externas ni conexión a internet.  
-
-### Navegación
-- Implementada con **Navigation Compose**.  
-- Menú lateral funcional para cambiar entre secciones.  
-
-### Gestión de estado
-- Manejo de datos mediante **ViewModel** y **StateFlow**.  
-- Interfaz reactiva ante cambios de estado.  
-
-### Diseño visual
-- Interfaz basada en **Material Design 3 (Material You)**.  
-- Tipografía, espaciado y color adaptados a la línea visual de Android moderno.  
-
-### Recursos nativos
-- Integración de la cámara del dispositivo para tomar fotografías directamente desde la app.  
-
-### Animaciones
-- Transiciones suaves y animaciones sutiles en elementos interactivos.
+1. [Aplicación Móvil (Kotlin + Jetpack Compose)](#-aplicación-móvil-kotlin--jetpack-compose)
+2. [Características Principales](#-características-principales)
+3. [Estructura del Proyecto Android](#-estructura-del-proyecto-android)
+4. [Dependencias Android](#-dependencias-principales-gradle)
+5. [Permisos Android](#-androidmanifest--permisos-principales)
+6. [Flujo del Usuario](#-flujo-de-usuario)
+7. [Cumplimiento de Requerimientos](#-cumplimiento-de-requerimientos)
+8. [Backend (Spring Boot 3.5 + MongoDB)](#️-edición-limitada--backend-spring-boot-35--mongodb)
+9. [Estructura del Proyecto Backend](#-estructura-del-proyecto-backend)
+10. [Dependencias del Backend (POM.xml)](#-dependencias-utilizadas-pomxml)
+11. [Seguridad y Endpoints](#-seguridad-spring-security)
+12. [Despliegue Completo: App → Backend → MongoDB](#-despliegue-de-la-aplicación-edición-limitada)
+13. [Requisitos para Ejecutar Localmente](#-requisitos-para-ejecutar-la-app-localmente)
+14. [APK Firmada](#-apk-firmada-entrega-final)
+15. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
 
 ---
 
-## Tecnologías utilizadas
+# 📱 Aplicación Móvil (Kotlin + Jetpack Compose)
 
-- **Kotlin**
-- **Android Studio**
-- **Jetpack Compose**
-- **Material Design 3**
-- **ViewModel + StateFlow**
-- **Navigation Compose**
+Edición Limitada es una app Android creada con:
+
+* **Kotlin**
+* **Jetpack Compose**
+* **MVVM**
+* **Navigation Compose**
+* **Room + DataStore**
+* **Retrofit + Gson**
+
+Conexión directa a un backend en Railway mediante HTTPS.
 
 ---
 
-## Estructura del proyecto
+# 🚀 Características Principales
+
+## 🔐 Autenticación
+
+* Registro e inicio de sesión
+* Manejo de sesión persistente (DataStore)
+* Validaciones de correo, contraseña y duplicados
+
+## 👤 Gestión de usuarios
+
+* Perfil de usuario conectado
+* Edición de datos personales
+* Vistas: *UserHome*, *UserProfile*
+
+## 🛍 Gestión de productos
+
+* Listado desde backend
+* CRUD completo
+* Subida de imágenes (cámara/galería)
+* Vista de detalle
+
+## 🧾 Gestión de clientes (Admin)
+
+* Listado completo
+* Crear, editar, eliminar
+* Búsqueda por email
+
+## 🛒 Carrito
+
+* Agregar productos
+* Modificar cantidades
+* Vista modal con resumen
+
+## 📸 Cámara & Galería
+
+* FileProvider
+* Permisos para API 31+
+* Selección desde galería
+
+## 📡 Conexión API REST
+
+* Retrofit + Gson
+* NullOnEmptyConverterFactory
+* Logging interceptor
+
+## 🗄 Almacenamiento Local
+
+* **Room** para productos/carrito
+* **DataStore** para token y correo
+
+## 🧭 Navegación
+
+* Navigation Compose
+* Rutas separadas por rol (Admin / User)
+* SplashScreen integrada
+
+## 🎨 Diseño Visual
+
+* Material Design 3
+* Tema y colores personalizados
+* Animaciones y transiciones suaves
+
+---
+
+# 📂 Estructura del Proyecto Android
+
 ```plaintext
-APPEdicionLimitada_008v_Grupo2/
-│
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/vivitasol/carcasamvvm/
-│   │   │   │   ├── data/
-│   │   │   │   │   └── PrefsDataStore.kt
-│   │   │   │   ├── model/
-│   │   │   │   │   └── Product.kt 
-│   │   │   │   ├── navigation/
-│   │   │   │   │   └── AppNav.kt
-│   │   │   │   ├── ui/theme/
-│   │   │   │   │   ├── Color.kt
-│   │   │   │   │   ├── Theme.kt
-│   │   │   │   │   └── Type.kt
-│   │   │   │   ├── viewmodels/
-│   │   │   │   │   ├── CreateProductViewModel.kt
-│   │   │   │   │   ├── DetailViewModel.kt
-│   │   │   │   │   ├── HomeViewModel.kt
-│   │   │   │   │   └── LoginViewModel.kt
-│   │   │   │   ├── views/
-│   │   │   │   │   ├── CreateProductView.kt
-│   │   │   │   │   ├── DetailView.kt
-│   │   │   │   │   ├── HomeView.kt
-│   │   │   │   │   ├── LoginView.kt
-│   │   │   │   │   └── MenuShellView.kt (Menú desplegable)
-│   │   │   │   └── MainActivity.kt
-│   │   │   ├── res/
-│   │   │   │   ├── drawable/   (imágenes de productos y logo)
-│   │   │   │   ├── font/ 
-│   │   │   │   ├── layout/
-│   │   │   │   └── values/
-│   │   │   └── AndroidManifest.xml
-│   │   └── ...
-│   └── build.gradle
-│
-├── .idea/                (configuración del proyecto)
-└── README.md
-
+app/
+└── src/main/java/com/vivitasol/carcasamvvm/
+    ├── data/
+    │   ├── AppDatabase
+    │   ├── ClientRepository
+    │   ├── ProductRepository
+    │   └── PrefsDataStore.kt
+    │
+    ├── model/
+    │   ├── Cliente
+    │   ├── ClienteRequest
+    │   ├── Product
+    │   └── CartItem
+    │
+    ├── remote/
+    │   ├── ApiClient
+    │   ├── ClienteService
+    │   ├── ProductoService
+    │   └── NullOnEmptyConverterFactory
+    │
+    ├── navigation/
+    │   └── AppNav.kt
+    │
+    ├── viewmodels/
+    │   ├── LoginViewModel
+    │   ├── RegisterViewModel
+    │   ├── HomeViewModel
+    │   ├── UserHomeViewModel
+    │   ├── EditProfileViewModel
+    │   ├── CreateProductViewModel
+    │   ├── DetailViewModel
+    │   ├── ClienteViewModel
+    │   ├── UserProfileViewModel
+    │   ├── CartViewModel
+    │   └── ViewModelFactory
+    │
+    ├── views/
+    │   ├── LoginView.kt
+    │   ├── RegisterView.kt
+    │   ├── HomeView.kt
+    │   ├── UserHomeView.kt
+    │   ├── UserProfileView.kt
+    │   ├── EditProfileView.kt
+    │   ├── CreateProductView.kt
+    │   ├── ClienteListView.kt
+    │   ├── ClienteDetailView.kt
+    │   ├── UserCartView.kt
+    │   ├── MenuShellView.kt
+    │   └── UserMenuShellView.kt
+    │
+    ├── LimitedEditionApp.kt
+    └── MainActivity.kt
 ```
 
 ---
 
-##  Cumplimiento de la rúbrica
+# 🛠 Dependencias Principales (Gradle)
 
-| Requisito                      | Estado |
-|--------------------------------|:------:|
-| Diseño visual con Material 3   | ✅ |
-| Formularios validados          | ✅ |
-| Navegación funcional           | ✅ |
-| Gestión de estado              | ✅ |
-| Almacenamiento local           | ✅ |
-| Uso de recursos nativos        | ✅ |
-| Animaciones                    | ✅ |
+## 📡 Retrofit + Gson
+
+```gradle
+implementation("com.squareup.retrofit2:retrofit:2.9.0")
+implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+```
+
+## 🗄 Room
+
+```gradle
+implementation("androidx.room:room-runtime:2.8.4")
+ksp("androidx.room:room-compiler:2.8.4")
+```
+
+## 🔐 DataStore
+
+```gradle
+implementation("androidx.datastore:datastore-preferences:1.1.1")
+```
+
+## 📷 Cámara + Galería
+
+```gradle
+implementation("io.coil-kt:coil-compose:2.7.0")
+implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+```
 
 ---
 
-##  Autoras / Autores
+# 📜 AndroidManifest — Permisos principales
 
-- **Anakena Balbontín**  
-- **Betsabé Spring**  
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="32" />
+```
 
 ---
 
-##  Nota final
+# ▶ Flujo de Usuario
 
-Este proyecto fue desarrollado con fines académicos para la asignatura de desarrollo móvil.  
-Integra los principales componentes del ecosistema moderno de Android, combinando **funcionalidad**, **diseño visual** y **uso de recursos nativos**
+1. **Splash Screen**
+   Carga + validación de sesión
+
+2. **Login / Registro**
+   Token + email → DataStore
+
+3. **Menú principal**
+
+   * Usuario: productos, carrito, perfil
+   * Admin: CRUD clientes/productos
+
+4. **Cámara / Galería**
+   Subida de imágenes para productos
+
+5. **Persistencia**
+
+   * Sesión → DataStore
+   * Productos offline → Room
+
+---
+
+# 🧪 Cumplimiento de Requerimientos
+
+| Requisito             | Estado |
+| --------------------- | ------ |
+| Pantallas funcionales | ✅      |
+| Autenticación         | ✅      |
+| Navegación            | ✅      |
+| Cámara y galería      | ✅      |
+| Retrofit + API real   | ✅      |
+| Room + DataStore      | ✅      |
+| Validaciones          | ✅      |
+| Material 3            | ✅      |
+| Arquitectura MVVM     | ✅      |
+
+---
+
+# 🛠️ Edición Limitada — Backend (Spring Boot 3.5 + MongoDB)
+
+El backend está construido con:
+
+* Java 17
+* Spring Boot 3.5.6
+* Spring Web
+* Spring Security
+* MongoDB
+* Lombok
+* Thymeleaf (para pruebas)
+
+---
+
+# 📦 Estructura del Proyecto Backend
+
+```plaintext
+src/main/java/com/example/edicionlimitada/back_end/
+│
+├── controller/
+│   ├── AuthController.java
+│   └── ClienteController.java
+│
+├── model/
+│   └── Cliente.java
+│
+├── repository/
+│   └── ClienteRepository.java
+│
+├── securityconfig/
+│   ├── SecurityConfig.java
+│   └── WebConfig.java
+│
+├── service/
+│   ├── AuthService.java
+│   ├── ClienteService.java
+│   └── BackEndApplication.java
+│
+└── resources/
+    ├── application.properties
+    ├── static/
+    └── templates/
+```
+
+---
+
+# 🍃 Base de datos MongoDB — Estructura JSON
+
+```json
+{
+  "_id": "string",
+  "nombre": "string",
+  "email": "string",
+  "contrasena": "string (hashed)",
+  "comuna": "string",
+  "region": "string",
+  "_class": "com.example.edicionlimitada.back_end.model.Cliente"
+}
+```
+
+---
+
+# 📚 Dependencias utilizadas (POM.XML)
+
+```xml
+<dependencies>
+    <!-- MongoDB -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+
+    <!-- Thymeleaf -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+
+    <!-- Web -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Seguridad -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <!-- DevTools -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+        <scope>runtime</scope>
+        <optional>true</optional>
+    </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <optional>true</optional>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+---
+
+# 🔐 Seguridad (Spring Security)
+
+✔ BCrypt
+✔ Filtros de autenticación
+✔ Protección de rutas
+✔ CORS habilitado
+
+---
+
+# 🔗 Endpoints principales
+
+## AuthController
+
+| Método | Endpoint         | Acción   |
+| ------ | ---------------- | -------- |
+| POST   | `/auth/login`    | Login    |
+| POST   | `/auth/register` | Registro |
+| GET    | `/auth/test`     | Prueba   |
+
+## ClienteController
+
+| Método | Endpoint         | Acción     |
+| ------ | ---------------- | ---------- |
+| GET    | `/clientes`      | Listar     |
+| GET    | `/clientes/{id}` | Obtener    |
+| POST   | `/clientes`      | Crear      |
+| PUT    | `/clientes/{id}` | Actualizar |
+| DELETE | `/clientes/{id}` | Eliminar   |
+
+---
+
+# 📘 Despliegue de la Aplicación Edición Limitada
+
+## 🚀 Arquitectura General
+
+```
+Android App (Kotlin)
+        |
+        v
+Spring Boot API (Railway)
+        |
+        v
+MongoDB Atlas
+```
+
+### ✔ Backend en Railway
+
+* Detecta Spring Boot automáticamente
+* Comando de build:
+
+  ```
+  ./mvnw clean package -DskipTests
+  java -jar target/back-end-0.0.1-SNAPSHOT.jar
+  ```
+* URL pública:
+
+  ```
+  https://appedicionlimitada008vgrupo2-production.up.railway.app/
+  ```
+
+### ✔ Conexión MongoDB Atlas
+
+```
+mongodb+srv://edicionlimitada:<password>@clouster1...
+```
+
+### ✔ App Android → Retrofit
+
+```kotlin
+private const val BASE_URL =
+    "https://appedicionlimitada008vgrupo2-production.up.railway.app/"
+```
+
+---
+
+# 6️⃣ Requisitos para ejecutar la app localmente
+
+### Backend
+
+* Java 17
+* Maven 3.8+
+* Spring Boot 3.5+
+
+### Android
+
+* Android Studio Hedgehog+
+* Min SDK 24
+
+### Variables importantes
+
+| Entorno     | Variable                  |
+| ----------- | ------------------------- |
+| Railway     | `PORT`                    |
+| Spring Boot | `spring.data.mongodb.uri` |
+| Android     | `BASE_URL`                |
+
+---
+
+# 📦 APK Firmada (Entrega Final)
+
+Incluye:
+
+✔ Conexión al backend
+✔ CRUD de usuarios
+✔ Validación de login
+✔ Funcionalidad admin
+✔ Conexión estable a MongoDB Atlas
+
+---
+
+# 🔧 Tecnologías Utilizadas
+
+* Kotlin
+* Android Studio
+* Jetpack Compose
+* Retrofit
+* Spring Boot
+* MongoDB Atlas
+* Railway
+* Maven
+* Java 17
+
+---
+
+👥 Autoras 
+Anakena Balbontín 
+Betsabé Spring
